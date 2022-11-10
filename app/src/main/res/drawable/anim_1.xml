@@ -1,0 +1,33 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:name="vector"
+            android:width="660dp"
+            android:height="660dp"
+            android:viewportWidth="660"
+            android:viewportHeight="660">
+            <path
+                android:name="boarder"
+                android:pathData="M 10 145.765 C 10 109.758 24.304 75.225 49.764 49.765 C 75.225 24.304 109.758 10 145.764 10 L 514.236 10 C 550.242 10 584.775 24.304 610.236 49.765 C 635.696 75.225 650 109.758 650 145.765 L 650 514.236 C 650 589.216 589.216 650 514.235 650 L 145.764 650 C 70.784 650 10 589.216 10 514.236 Z"
+                android:strokeWidth="20"
+                android:strokeColor="@color/dice_color" />
+            <path
+                android:name="center"
+                android:fillColor="@color/dice_color"
+                android:pathData="M 330 280 C 357.6 280 380 302.4 380 330 C 380 357.6 357.6 380 330 380 C 302.4 380 280 357.6 280 330 C 280 302.4 302.4 280 330 280 Z"
+                android:strokeWidth="1" />
+        </vector>
+    </aapt:attr>
+    <target android:name="center">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="500"
+                android:interpolator="@android:anim/decelerate_interpolator"
+                android:propertyName="pathData"
+                android:valueFrom="M 330 280 C 357.6 280 380 302.4 380 330 C 380 357.6 357.6 380 330 380 C 302.4 380 280 357.6 280 330 C 280 302.4 302.4 280 330 280 Z"
+                android:valueTo="M 330 280 C 357.6 280 380 302.4 380 330 C 380 357.6 357.6 380 330 380 C 302.4 380 280 357.6 280 330 C 280 302.4 302.4 280 330 280 Z"
+                android:valueType="pathType" />
+        </aapt:attr>
+    </target>
+</animated-vector>
