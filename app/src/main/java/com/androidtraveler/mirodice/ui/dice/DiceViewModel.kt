@@ -2,6 +2,7 @@ package com.androidtraveler.mirodice.ui.dice
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlin.random.Random
 
 class DiceViewModel : ViewModel() {
 
@@ -13,8 +14,9 @@ class DiceViewModel : ViewModel() {
     private val range = 1..6
 
     fun onTossClicked() {
-        dice1value = range.random()
-        dice2value = range.random()
+        val random = Random(System.currentTimeMillis())
+        dice1value = range.random(random)
+        dice2value = range.random(random)
         animationState.value = dice1value to dice2value
     }
 }
