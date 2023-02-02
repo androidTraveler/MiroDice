@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MiroDice</string>
+    <string name="toss">TOSS</string>
 </resources>

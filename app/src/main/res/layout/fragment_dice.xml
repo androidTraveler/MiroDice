@@ -6,8 +6,19 @@
     android:layout_height="match_parent"
     android:background="@color/swirl">
 
+    <ImageView
+        android:id="@+id/ivRevert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:background="@color/millbrook"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
     <TextView
-        android:id="@+id/tvTTT"
+        android:id="@+id/tvResult"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -16,7 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="ddd" />
+        tools:text="12" />
 
     <ImageView
         android:id="@+id/ivDice1"
@@ -45,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:text="TOSS"
+        android:text="@string/toss"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

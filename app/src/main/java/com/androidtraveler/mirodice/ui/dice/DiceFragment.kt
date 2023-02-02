@@ -11,6 +11,8 @@ import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import com.androidtraveler.mirodice.R
+import com.androidtraveler.mirodice.data.AnimationType
+import com.androidtraveler.mirodice.data.Dice
 import com.androidtraveler.mirodice.databinding.FragmentDiceBinding
 import com.androidtraveler.mirodice.ui.base.BaseFragment
 
@@ -41,30 +43,31 @@ class DiceFragment : BaseFragment<FragmentDiceBinding>(
 
     private fun initListeners() {
         binding.btnToss.setOnClickListener {
-            viewModel.animationState.value?.let {
-                setInImage(binding.ivDice1, it.first)
-                setInImage(binding.ivDice2, it.second)
-            }
+            setInImages()
             viewModel.onTossClicked()
         }
+        binding.ivRevert.setOnClickListener {
+            setInImages()
+            viewModel.onRevertClicked()
+        }
+    }
+
+    private fun setInImages() = viewModel.animationState.value?.let {
+        setInImage(binding.ivDice1, it.dice.first)
+        setInImage(binding.ivDice2, it.dice.second)
     }
 
     private fun initObservers() {
         viewModel.animationState.observe(viewLifecycleOwner) {
-            startAnimation(it)
-        }
-
-        viewModel.value.observe(viewLifecycleOwner) {
-            binding.tvTTT.text = it.toString()
-            val list: MutableList<Int>? = viewModel.state.value
-            list?.let { items ->
-                var a = items[it - 2]
-                a++
-                items[it - 2] = a
+            when (it) {
+                is AnimationType.Increment -> playIncrementAnimation(it.dice)
+                is AnimationType.Decrement -> playDecrementAnimation(it.dice, it.oldDice)
             }
-            viewModel.state.value = list
         }
-        viewModel.state.observe(viewLifecycleOwner) {
+        viewModel.displayValue.observe(viewLifecycleOwner) {
+            binding.tvResult.text = it.toString()
+        }
+        viewModel.chartState.observe(viewLifecycleOwner) {
             binding.tv2.text = it[0].toString()
             binding.tv3.text = it[1].toString()
             binding.tv4.text = it[2].toString()
@@ -84,39 +87,49 @@ class DiceFragment : BaseFragment<FragmentDiceBinding>(
         ObjectAnimator.ofFloat(binding.ivDice2, "rotation", 0f, 360f).setDuration(500)
     )
 
-    private fun setInImage(iv: ImageView, dice: Int) {
-        when (dice) {
-            1 -> iv.setImageResource(R.drawable.anim_1)
-            2 -> iv.setImageResource(R.drawable.anim_2_in)
-            3 -> iv.setImageResource(R.drawable.anim_3_in)
-            4 -> iv.setImageResource(R.drawable.anim_4_in)
-            5 -> iv.setImageResource(R.drawable.anim_5_in)
-            6 -> iv.setImageResource(R.drawable.anim_6_in)
-        }
+    private fun setInImage(iv: ImageView, dice: Int) = when (dice) {
+        1 -> iv.setImageResource(R.drawable.anim_1)
+        2 -> iv.setImageResource(R.drawable.anim_2_in)
+        3 -> iv.setImageResource(R.drawable.anim_3_in)
+        4 -> iv.setImageResource(R.drawable.anim_4_in)
+        5 -> iv.setImageResource(R.drawable.anim_5_in)
+        6 -> iv.setImageResource(R.drawable.anim_6_in)
+        else -> {}
     }
 
-    private fun setOutImage(iv: ImageView, dice: Int) {
-        when (dice) {
-            1 -> iv.setImageResource(R.drawable.anim_1)
-            2 -> iv.setImageResource(R.drawable.anim_2_out)
-            3 -> iv.setImageResource(R.drawable.anim_3_out)
-            4 -> iv.setImageResource(R.drawable.anim_4_out)
-            5 -> iv.setImageResource(R.drawable.anim_5_out)
-            6 -> iv.setImageResource(R.drawable.anim_6_out)
-        }
+    private fun setOutImage(iv: ImageView, dice: Int) = when (dice) {
+        1 -> iv.setImageResource(R.drawable.anim_1)
+        2 -> iv.setImageResource(R.drawable.anim_2_out)
+        3 -> iv.setImageResource(R.drawable.anim_3_out)
+        4 -> iv.setImageResource(R.drawable.anim_4_out)
+        5 -> iv.setImageResource(R.drawable.anim_5_out)
+        6 -> iv.setImageResource(R.drawable.anim_6_out)
+        else -> {}
     }
 
-    private fun startAnimation(dices: Pair<Int, Int>) {
+    private fun playIncrementAnimation(dice: Dice) {
         animateDrawables()
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             rotationSet.start()
             handler.postDelayed({
-                setOutImage(binding.ivDice1, dices.first)
-                setOutImage(binding.ivDice2, dices.second)
+                setOutImage(binding.ivDice1, dice.first)
+                setOutImage(binding.ivDice2, dice.second)
                 animateDrawables()
-                viewModel.value.postValue(dices.first + dices.second)
+                viewModel.updateDisplayValue()
+                viewModel.incrementData()
             }, 500)
+        }, 500)
+    }
+
+    private fun playDecrementAnimation(dice: Dice, oldDice: Dice) {
+        animateDrawables()
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            setOutImage(binding.ivDice1, dice.first)
+            setOutImage(binding.ivDice2, dice.second)
+            animateDrawables()
+            viewModel.decrementData(oldDice)
         }, 500)
     }
 
