@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.androidtraveler.mirodice.data.AnimationType
 import com.androidtraveler.mirodice.data.Dice
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlin.random.Random
