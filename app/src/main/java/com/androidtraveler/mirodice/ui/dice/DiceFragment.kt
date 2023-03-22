@@ -3,17 +3,22 @@ package com.androidtraveler.mirodice.ui.dice
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.drawable.AnimatedVectorDrawable
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.androidtraveler.mirodice.R
 import com.androidtraveler.mirodice.data.AnimationType
 import com.androidtraveler.mirodice.data.Dice
 import com.androidtraveler.mirodice.databinding.FragmentDiceBinding
 import com.androidtraveler.mirodice.extensions.delayOnLifecycle
 import com.androidtraveler.mirodice.ui.base.BaseFragment
+import kotlinx.coroutines.launch
 
 class DiceFragment : BaseFragment<FragmentDiceBinding>(
     R.layout.fragment_dice,
@@ -22,6 +27,7 @@ class DiceFragment : BaseFragment<FragmentDiceBinding>(
 
     private lateinit var viewModel: DiceViewModel
     private val rotationSet = AnimatorSet()
+    private val mp by lazy { MediaPlayer.create(context, R.raw.dice_sound) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +63,14 @@ class DiceFragment : BaseFragment<FragmentDiceBinding>(
     }
 
     private fun initObservers() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.buttonState.collect {
+                    binding.btnToss.isClickable = it
+                    binding.ivRevert.isClickable = it
+                }
+            }
+        }
         viewModel.animationState.observe(viewLifecycleOwner) {
             when (it) {
                 is AnimationType.Increment -> playIncrementAnimation(it.dice)
@@ -111,11 +125,11 @@ class DiceFragment : BaseFragment<FragmentDiceBinding>(
         view?.let {
             it.delayOnLifecycle(500) {
                 rotationSet.start()
+                mp.start()
                 it.delayOnLifecycle(500) {
                     setOutImage(binding.ivDice1, dice.first)
                     setOutImage(binding.ivDice2, dice.second)
                     animateDrawables()
-                    viewModel.updateDisplayValue()
                     viewModel.incrementData()
                 }
             }
