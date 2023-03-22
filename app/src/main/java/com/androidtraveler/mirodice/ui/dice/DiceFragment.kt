@@ -4,8 +4,6 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
@@ -14,6 +12,7 @@ import com.androidtraveler.mirodice.R
 import com.androidtraveler.mirodice.data.AnimationType
 import com.androidtraveler.mirodice.data.Dice
 import com.androidtraveler.mirodice.databinding.FragmentDiceBinding
+import com.androidtraveler.mirodice.extensions.delayOnLifecycle
 import com.androidtraveler.mirodice.ui.base.BaseFragment
 
 class DiceFragment : BaseFragment<FragmentDiceBinding>(
@@ -109,28 +108,28 @@ class DiceFragment : BaseFragment<FragmentDiceBinding>(
 
     private fun playIncrementAnimation(dice: Dice) {
         animateDrawables()
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({
-            rotationSet.start()
-            handler.postDelayed({
-                setOutImage(binding.ivDice1, dice.first)
-                setOutImage(binding.ivDice2, dice.second)
-                animateDrawables()
-                viewModel.updateDisplayValue()
-                viewModel.incrementData()
-            }, 500)
-        }, 500)
+        view?.let {
+            it.delayOnLifecycle(500) {
+                rotationSet.start()
+                it.delayOnLifecycle(500) {
+                    setOutImage(binding.ivDice1, dice.first)
+                    setOutImage(binding.ivDice2, dice.second)
+                    animateDrawables()
+                    viewModel.updateDisplayValue()
+                    viewModel.incrementData()
+                }
+            }
+        }
     }
 
     private fun playDecrementAnimation(dice: Dice, oldDice: Dice) {
         animateDrawables()
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({
+        view?.delayOnLifecycle(500) {
             setOutImage(binding.ivDice1, dice.first)
             setOutImage(binding.ivDice2, dice.second)
             animateDrawables()
             viewModel.decrementData(oldDice)
-        }, 500)
+        }
     }
 
     private fun animateDrawables() {
